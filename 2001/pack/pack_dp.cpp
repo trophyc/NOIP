@@ -5,11 +5,11 @@
 
 /*
 动态规划，设：dp[i,j] 表示选前i个物品刚好能装满 j 空间 (bool),则有：
-dp[i,j] = a[i-1, j] or a[i-1, j-v[i]]  j>v[i]
-a[i,0] = 0 ;
+dp[i,j] = dp[i-1, j] or dp[i-1, j-v[i]]  j>v[i]
+dp[i,0] = 0 ;
 不过，这题有点特殊：
 就是：
-a[i,j]只与: i-1有关
+dp[i,j]只与: i-1有关
 所以可以降到一维...
 */
 int main(void)
