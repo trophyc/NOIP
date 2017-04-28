@@ -37,10 +37,8 @@ int main ()
    memset (value, 0, sizeof(value));
    
    for (int i = 0; i < nbr; i ++) {
-      for (int j = 0; j <= t; j ++) {
-         if (j > herbs[i].t) {
-            value[j] = MAX (value[j], herbs[i].value + value[j] - herbs[i].t);
-         }
+      for (int j = t; j >= herbs[i].t; j --) { 
+         value[j] = MAX (value[j], herbs[i].value + value[j - herbs[i].t]);
       }
    }
 
