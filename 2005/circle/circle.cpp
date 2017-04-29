@@ -25,24 +25,35 @@ int main ()
       result[i] = *(p + len - 1 -i) - '0';
    }
 
-   if (result[0] == 5 && digits > 1 && result[1] != 2 && result[1] != 7) {
-      delete [] result;
-      cout << -1 << endl;
-      return 0;
-   }
-
    int* mul = new int [digits];
    memcpy (mul, result, sizeof(int)*digits);
 
+   long long limit = 10;
    long long i = 0;
+   int cur_digit = 1;
+   bool found = false;
    do {
       Multiply (result, mul, digits);
-//      PrintResult (result, digits);
       i++;
-   } while (memcmp (mul, result, sizeof (int)*digits) != 0);
+      if (memcmp (mul, result, sizeof (int) * cur_digit) == 0) {
+         // we have found the period of the first "cur_digit"s.
+         // for the next digit, the period wouldn't be bigger than 10 * this period.
+         if (cur_digit == digits) {
+               found = true;
+               break;
+         }
+         limit = i * 10;
+         cur_digit ++;
+      }
+   } while (i <= limit && cur_digit <= digits);
+
    cout << "Digits = " << digits << endl;
    PrintResult (result, digits);
-   cout << i << endl;
+   if (found) {
+         cout << i << endl;
+   } else {
+         cout << -1 << endl;
+   }
 
    delete [] result;
    delete [] mul;
