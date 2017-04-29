@@ -7,7 +7,13 @@ using namespace std;
 
 void PrintResult (const int* p, int n);
 void Multiply (int* result, int* mul, int n);
-
+/*
+1. 高精度计算。
+2. 必有周期，因为n位数只有10^n个排列。
+3. 但是有可能前几个不再周期里，如35, 35*35 = 1225; 25*25 = 625, ...
+    除第一个以外，都是25
+4. 如果，前2位的周期因为3,则第3位周期不大于30. 否则是3中描述的情况
+*/
 int main ()
 {
    string nbr;
