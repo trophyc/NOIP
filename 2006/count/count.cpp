@@ -1,6 +1,4 @@
 #include <iostream>
-#include <string.h>
-#include <stdio.h>
 using namespace std;
 
 #define MAX_DIGITS 26
