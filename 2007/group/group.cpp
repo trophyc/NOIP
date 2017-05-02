@@ -11,6 +11,8 @@ struct gift
 int CompareGift(const void* A, const void* B);
 void SetLinks (gift* allGifts, int n);
 void PrintLinks (gift* allGifts, int n);
+void DeleteLink (gift* allGifts, int index);
+int MakeGroup (gift* allGifts, int n, int limit);
 
 #define HEAD 0
 #define TAIL 1
@@ -28,7 +30,15 @@ int main ()
    }
    qsort (allGifts+2, n, sizeof(gift), CompareGift);
    SetLinks (allGifts, n);
-   PrintLinks (allGifts, n);
+
+   int count = 0;
+   while (MakeGroup(allGifts, n, limit) > 0) {
+      count ++;
+ //     PrintLinks(allGifts, n);
+   }
+
+   printf ("%d\n", count);
+
    return 0;
 }
 
@@ -66,4 +76,43 @@ void PrintLinks (gift* allGifts, int n)
       printf ("i = %d, value = %d, prev = %d, next = %d\n", 
                i, allGifts[i].value, allGifts[i].prev, allGifts[i].next );
    }
+}
+
+void DeleteLink (gift* allGifts, int index)
+{
+   int prev = allGifts[index].prev;
+   int next = allGifts[index].next;
+   
+   allGifts[index].prev = -1;
+   allGifts[index].next = -1;
+   if (prev >= 0) {
+      allGifts[next].prev = prev;
+   }
+   if (next >= 0) {
+      allGifts[prev].next = next;
+   }
+}
+
+int MakeGroup (gift* allGifts, int n, int limit)
+{
+   int big = allGifts[HEAD].next;
+   int small = TAIL;
+
+   if (big == TAIL) {
+      return 0;
+   }
+
+   DeleteLink(allGifts, big);
+   int gap = limit - allGifts[big].value;
+
+   int last = small;
+   do {
+      last = small;
+      small = allGifts[small].prev;
+   } while ( small > TAIL && allGifts[small].value <= gap);
+
+   if (last > TAIL) {
+      DeleteLink (allGifts, last);
+   }
+   return 1;
 }
