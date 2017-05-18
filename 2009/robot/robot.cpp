@@ -14,7 +14,6 @@ int fmax[MAX];
 void ReadIn();
 void Init();
 void PrintCoin();
-void PrintFmax();
 void Calc ();
 void CalcG (int time, int road);
 
