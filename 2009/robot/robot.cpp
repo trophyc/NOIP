@@ -78,7 +78,7 @@ void CalcG (int time, int road)
    for (int i = time1 ; i < time; i++) {
       j = i + (road - time);
       int j1 = (j < 0 ? j + n : j);
-      maxG = max (maxG, fmax[i] - coin[j][i] - cost[j]);
+      maxG = max (maxG, fmax[i] - coin[j1][i] - cost[j1]);
    }
    g[road][time] = maxG;
 }
