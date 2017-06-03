@@ -24,15 +24,23 @@ int main ()
       ret = scanf ("%c", &c);
    }
 
+   bool matched = true;
+   int len = strlen (toBeFound);
    while (ret > 0 && c != 0x0a && c != 0x0d) {
       if (c != ' ' && c != '\t') {
-         word[i++] = toupper (c);
+         word[i] = toupper (c);
+         if (matched && i < len) {
+            matched =( word[i] == toBeFound[i]);
+         } else {
+            matched = false;
+         }
+         i++;
       } else {
          word[i] = '\0';
-         if (strcmp (word, toBeFound) == 0) {
-            sum++;
-         }
+         matched = matched && (i == len);
+         sum = (matched ? sum+1 : sum);
          i = 0;
+         matched = true;
       }
       ret = scanf ("%c", &c);      
    } 
