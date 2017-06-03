@@ -56,4 +56,5 @@ int compare (const void* A, const void* B)
    if (a->nbr < b->nbr) {
       return -1;
    }
+   return 1;
 }
