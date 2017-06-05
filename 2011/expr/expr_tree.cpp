@@ -1,135 +1,126 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <memory.h>
 
-class CNode;
+#define MAX_NODES 100000
 
-CNode* TreeFromInput (char ending = 0);
-void PrintMidOrder (CNode* root);
-void PrintPostOrder (CNode* root);
-
-class CNode 
+struct Node
 {
-public:
-   CNode (char oprand);
-   virtual ~CNode ();
-
-   int GetOnes();
-   int GetZeros();
-
-public:
-   char m_op;
-   CNode* m_left;
-   CNode* m_right;
-
-protected:   
-   int m_zeros;
-   int m_ones;
+   char op;
+   int  left;
+   int  right;  
+   int  zeros;
+   int  ones;    
 };
 
-CNode::CNode (char oprand) : m_op (oprand)
-{
-   m_left = m_right = NULL;
-   m_zeros = m_ones = -1;
-}
+Node nodes[MAX_NODES];
+int pCur = 0;
 
-CNode::~CNode()
-{
-   if (m_left) {
-      delete m_left;
-   }
-   if (m_right) {
-      delete m_right;
-   }
-}
+int TreeFromInput (char ending = 0); // return the index of root node.
+void PrintMidOrder (int root);
+void PrintPostOrder (int root);
+int GetOnes (int idx);
+int GetZeros (int idx);
 
-int CNode::GetOnes ()
+#define THIS(x) (nodes[x])
+#define LEFT(x) (nodes[x].left)
+#define RIGHT(x) (nodes[x].right)
+
+int GetOnes (int idx)
 {
-   if (m_ones != -1) {
-      return m_ones;
+   if (THIS(idx).ones != -1) {
+      return THIS(idx).ones;
    }
 
    int leftOnes, leftZeros, rightOnes, rightZeros;
 
-   leftOnes = (m_left ? m_left->GetOnes() : 1);
-   leftZeros = (m_left ? m_left->GetZeros() : 1);
-   rightOnes = (m_right ? m_right->GetOnes() : 1);
-   rightZeros = (m_right ? m_right->GetZeros() : 1);
+   leftOnes = (THIS(idx).left != -1 ? GetOnes (LEFT(idx)) : 1);
+   leftZeros = (THIS(idx).left != -1 ? GetZeros(LEFT(idx)) : 1);
+   rightOnes = (THIS(idx).right != -1 ? GetOnes(RIGHT(idx)) : 1);
+   rightZeros = (THIS(idx).right != -1  ? GetZeros(RIGHT(idx)) : 1);
 
-   if (m_op == '+') {
-      m_ones = leftOnes * rightOnes % 1007;
-      m_ones += leftOnes * rightZeros % 1007;
-      m_ones += leftZeros * rightOnes % 1007;
-      m_ones %= 1007;
+   if (THIS(idx).op == '+') {
+      THIS(idx).ones = leftOnes * rightOnes % 1007;
+      THIS(idx).ones += leftOnes * rightZeros % 1007;
+      THIS(idx).ones += leftZeros * rightOnes % 1007;
+      THIS(idx).ones %= 1007;
    } else {
-      m_ones = leftOnes * rightOnes % 1007;
+      THIS(idx).ones = leftOnes * rightOnes % 1007;
    }
-   return m_ones;
+   return THIS(idx).ones;
 }
 
-int CNode::GetZeros ()
+int GetZeros (int idx)
 {
-   if (m_zeros != -1) {
-      return m_zeros;
+   if (THIS(idx).zeros != -1) {
+      return THIS(idx).zeros;
    }
 
    int leftOnes, leftZeros, rightOnes, rightZeros;
 
-   leftOnes = (m_left ? m_left->GetOnes() : 1);
-   leftZeros = (m_left ? m_left->GetZeros() : 1);
-   rightOnes = (m_right ? m_right->GetOnes() : 1);
-   rightZeros = (m_right ? m_right->GetZeros() : 1);
+   leftOnes = (THIS(idx).left != -1 ? GetOnes(LEFT(idx)) : 1);
+   leftZeros = (THIS(idx).left != -1 ? GetZeros(LEFT(idx)) : 1);
+   rightOnes = (THIS(idx).right != -1 ? GetOnes(RIGHT(idx)) : 1);
+   rightZeros = (THIS(idx).right != -1  ? GetZeros(RIGHT(idx)) : 1);
 
-   if (m_op == '*') {
-      m_zeros = leftZeros * rightOnes % 1007;
-      m_zeros += leftZeros * rightZeros % 1007;
-      m_zeros += leftOnes * rightZeros % 1007;
-      m_zeros %= 1007;
+   if (THIS(idx).op == '*') {
+      THIS(idx).zeros = leftZeros * rightOnes % 1007;
+      THIS(idx).zeros += leftZeros * rightZeros % 1007;
+      THIS(idx).zeros += leftOnes * rightZeros % 1007;
+      THIS(idx).zeros %= 1007;
    } else {
-      m_zeros = leftZeros * rightZeros % 1007;
+      THIS(idx).zeros = leftZeros * rightZeros % 1007;
    }
-   return m_zeros;
+   return THIS(idx).zeros;
 }
 
 int main ()
 {
    int dummy;
    scanf ("%d\n", &dummy);
-   CNode* root = TreeFromInput ();
+
+   memset (nodes, -1, sizeof(nodes));
+   pCur = 0;
+
+   int root = TreeFromInput ();
 //   PrintMidOrder (root);
 ///   printf ("\n");
 //   PrintPostOrder (root);
 //   printf ("\n");
-   printf ("%d\n", root->GetZeros());
-   delete root;
+   printf ("%d\n", GetZeros(root));
    return 0;
 }
 
-CNode* TreeFromInput (char ending)
+int TreeFromInput (char ending)
 {
-   CNode* root  = NULL;
-   CNode* rightMost = NULL;
+   int root  = -1;
+   int rightMost = -1;
    char c;
    int ret = scanf ("%c", &c);
 
    bool goOn = (ending == 0 ? (c != 0x0a && c != 0x0d && c != 0) : (c != ending)) && (ret != 0);
    while (goOn ) {
-      CNode* tmp;
+      int tmp;
       if (c == '+') {
-         tmp = new CNode ('+');
-         tmp->m_left = root;
+         tmp = pCur;
+         THIS(tmp).op = '+';
+         LEFT(tmp) = root;
          root = tmp;
          rightMost = root;
+         pCur++;
       } else  if (c == '*' || c == '(') {
          if (c == '*') {
-            tmp = new CNode ('*');
+            tmp = pCur;
+            THIS(tmp).op = '*';
+            pCur++;
          } else {
             tmp = TreeFromInput (')');
          }
-         if (!root) {
+         if (root == -1) {
             root = tmp;
             rightMost = tmp;
          } else {
-            rightMost->m_right = tmp;
+            RIGHT(rightMost) = tmp;
             rightMost = tmp;
          }
       } else {
@@ -141,24 +132,24 @@ CNode* TreeFromInput (char ending)
    return root;
 }
 
-void PrintMidOrder (CNode* root)
+void PrintMidOrder (int root)
 {
-   if (root->m_left) {
-      PrintMidOrder (root->m_left);
+   if (LEFT(root) != -1) {
+      PrintMidOrder (LEFT(root));
    }
-   printf ("%c", root->m_op);
-   if (root->m_right)  {
-      PrintMidOrder (root->m_right);
+   printf ("%c", THIS(root).op);
+   if (RIGHT(root) != -1)  {
+      PrintMidOrder (RIGHT(root));
    }
 }
 
-void PrintPostOrder (CNode* root)
+void PrintPostOrder (int root)
 {
-   if (root->m_left) {
-      PrintPostOrder (root->m_left);
+   if (LEFT(root) != -1) {
+      PrintPostOrder (LEFT(root));
    }
-   if (root->m_right)  {
-      PrintPostOrder (root->m_right);
+   if (RIGHT(root))  {
+      PrintPostOrder (RIGHT(root));
    }
-   printf ("%c", root->m_op);
+   printf ("%c", THIS(root).op);
 }
