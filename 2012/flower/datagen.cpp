@@ -4,13 +4,14 @@
 
 int main ()
 {
+   int n, m, a;
    srand(time(0));
 
-   int n = 80;
-   int m = 100;
-   printf ("%d %d\n", n, m);
+   scanf ("%d %d %d", &n, &m, &a);
+
+   printf ("%d %d %d\n", n, m, a);
    for (int i = 0; i < n; i++) {
-      printf ("%d ", rand() % 99 + 1);
+      printf ("%d ", rand() % a + 1);
    }
    return 0;
 }
