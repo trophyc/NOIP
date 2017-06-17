@@ -92,7 +92,7 @@ void PrintData()
 
 bool CultureConflict(int n) 
 {
-   for (int i = 0; i < MAX_CULTURES; i++) {
+   for (int i = 0; i < cultureNbr; i++) {
       if (cultureExpel[n][i] && usedCultures[i]) {
          return true;
       }
@@ -123,6 +123,8 @@ int ShortestPath (int s, int d)
          } else {
             theRest += tmp;
          }
+      } else if (CultureConflict(d)) {
+         theRest = -1;
       }
 
       if (theRest != -1) {
