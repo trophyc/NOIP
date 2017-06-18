@@ -18,6 +18,7 @@ struct Nation
 Nation nations[MAX_NATIONS];
 bool cultureExpel[MAX_CULTURES][MAX_CULTURES];
 bool usedCultures[MAX_CULTURES];
+int level = 0;
 
 void InitData();
 void PrintData();
@@ -94,7 +95,7 @@ void PrintData()
 bool CultureConflict(int n) 
 {
    for (int i = 0; i < cultureNbr; i++) {
-      if (cultureExpel[n][i] && usedCultures[i]) {
+      if (cultureExpel[nations[n].culture][i] && usedCultures[i]) {
          return true;
       }
    }
@@ -104,8 +105,17 @@ bool CultureConflict(int n)
 int ShortestPath (int s, int d)
 {
    int shortest = MAX_DISTANCE + 1;
-
+/*
+printf ("level = %d\t\ts = %d, d = %d\n", ++level, s, d);
+PrintUsedCultures();
+if (level > 100) {
+   exit(0);
+}*/
    if (CultureConflict(s)) {
+/*
+level --;
+printf ("\t\tculture conflict\n");
+*/
       return -1;
    }
 
@@ -135,6 +145,7 @@ int ShortestPath (int s, int d)
 
    shortest = (shortest >= MAX_DISTANCE ? -1 : shortest);
    usedCultures[nations[s].culture] = false;
+//level --;
    return shortest;
 }
 
