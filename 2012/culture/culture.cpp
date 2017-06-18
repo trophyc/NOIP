@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <memory.h>
+#include <stdlib.h>
 
 #define MAX_NATIONS 100
 #define MAX_CULTURES 100
@@ -22,11 +23,12 @@ void InitData();
 void PrintData();
 bool CultureConflict(int n);
 int ShortestPath (int s, int d);
+void PrintUsedCultures();
 
 int main ()
 {
    InitData();
-   PrintData();
+//   PrintData();
    printf ("%d\n", ShortestPath(start, end));
    return 0;
 }
@@ -47,9 +49,8 @@ void InitData()
          int a;
          scanf ("%d", &a);
          if (i == j) {
-            cultureExpel[i][j] = true;            
-         }
-         if ( a == 1) {
+            cultureExpel[i][j] = true;
+         } else if ( a == 1) {
             cultureExpel[i][j] = true;
          } else {
             cultureExpel[i][j] = false;            
@@ -107,9 +108,9 @@ int ShortestPath (int s, int d)
    if (CultureConflict(s)) {
       return -1;
    }
+
    // Mask this culture
    usedCultures[nations[s].culture] = true;
-
    for (int i = 0; i < nationNbr; i++) {
       int theRest;
       if (nations[s].roads[i] == 0) {
@@ -135,4 +136,13 @@ int ShortestPath (int s, int d)
    shortest = (shortest >= MAX_DISTANCE ? -1 : shortest);
    usedCultures[nations[s].culture] = false;
    return shortest;
+}
+
+void PrintUsedCultures()
+{
+   printf ("Used cultures: ");
+   for (int i = 0; i < cultureNbr; i++) {
+      printf ("%d ", usedCultures[i]);
+   }
+   printf ("\n");
 }
