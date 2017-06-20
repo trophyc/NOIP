@@ -123,9 +123,9 @@ void UpdateDistance (int cur)
    }
 
    for (int i = 0; i < nationNbr; i++) {
-      int road = nations[cur].roads[i];
+      unsigned int road = nations[cur].roads[i];
       if (road && !nations[i].selected && !CultureConflict(cultureMap, i)) {
-         int distance = nations[cur].distance + road;
+         unsigned int distance = nations[cur].distance + road;
          if (distance <= nations[i].distance) {
             nations[i].distance = distance;
             nations[i].from = cur;
@@ -137,7 +137,7 @@ void UpdateDistance (int cur)
 int SelectNext()
 {
    int next = 0;
-   int tmp = INFINITE;
+   unsigned int tmp = INFINITE;
 
    for (int i = 0; i < nationNbr; i++) {
       if (nations[i].selected) {
