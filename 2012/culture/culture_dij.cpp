@@ -14,9 +14,10 @@ struct Nation
 {
    int culture;
    int roads [MAX_NATIONS];
-   unsigned int distance; // d[i] in dijkstra
-   bool selected;     // In S set
-   int from;            // storing the path.
+   unsigned int distance;     // d[i] in dijkstra
+   bool selected;             // In S set
+   int from[MAX_NATIONS];     // storing the path, -1 means invalid.
+   int fromNbr;               // how many from nodes
 };
 
 Nation nations[MAX_NATIONS];
@@ -28,7 +29,7 @@ void PrintData ();
 void Dijkstra (int start);
 void UpdateDistance (int cur);
 int SelectNext();
-bool CultureConflict (bool* map, int i);
+bool CultureConflict (int cur, int i);
 
 int main ()
 {
@@ -50,6 +51,8 @@ void InitData()
       nations[i].culture = culture - 1;
       nations[i].distance = INFINITE;
       nations[i].selected = false;
+      memset (nations[i].from, -1, sizeof (nations[i].from));
+      nations[i].fromNbr = 0;
    }
 
    for (int i = 0; i < cultureNbr; i++) {
@@ -102,7 +105,6 @@ void Dijkstra (int start)
 {
    nations[start].distance = 0;   
    nations[start].selected = true;
-   nations[start].from = -1;
 
    int current = start;
    for (int i = 1; i < nationNbr; i++) {
@@ -114,21 +116,17 @@ void Dijkstra (int start)
 
 void UpdateDistance (int cur)
 {
-   bool cultureMap[MAX_NATIONS];
-   memset (cultureMap, 0, sizeof(cultureMap));
-   int p = cur;
-   while (p != -1) {
-      cultureMap[nations[p].culture] = true;
-      p = nations[p].from;
-   }
-
    for (int i = 0; i < nationNbr; i++) {
       unsigned int road = nations[cur].roads[i];
-      if (road && !nations[i].selected && !CultureConflict(cultureMap, i)) {
+      if (road && !nations[i].selected && !CultureConflict(cur, i)) {
          unsigned int distance = nations[cur].distance + road;
-         if (distance <= nations[i].distance) {
+         if (distance < nations[i].distance) {
             nations[i].distance = distance;
-            nations[i].from = cur;
+            nations[i].from[0] = cur;
+            nations[i].fromNbr = 1;
+         } else if (distance < nations[i].distance) {
+            nations[i].from[nations[i].fromNbr] = cur;
+            nations[i].fromNbr ++;      
          }
       }
    }
@@ -151,12 +149,20 @@ int SelectNext()
    return next;
 }
 
-bool CultureConflict (bool* map, int i)
+#define CONFLICT(i,j) (cultureExpel[nations[j].culture][nations[i].culture])
+
+bool CultureConflict (int cur, int i)
 {
-   for (int j = 0; j < cultureNbr; j++) {
-      if (cultureExpel[nations[i].culture][j] && map[j]) {
-         return true;
+   bool result = false;
+   if (CONFLICT (cur, i)) {
+      return true;
+   }
+   for (int j = 0; j < nations[cur].fromNbr; j++) {
+      result = CultureConflict (nations[cur].from[j], i);
+      if (result == false) {
+         return false;
       }
    }
-   return false;
+
+   return result;
 }
