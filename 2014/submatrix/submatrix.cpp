@@ -81,12 +81,14 @@ int GetMinWith (int* selectedRows, int rows, int totalCols, int cols)
       }
    }
 
-   for (int j = 0; j < cols; j++) {
+   for (int j = 0; j < totalCols; j++) {
       dp[1][j] = v_cost[j];
    }
+
    for (int i = 2; i <= cols; i++) {
       for (int j = i - 1; j < totalCols; j++) {
-         dp[i][j] = v_cost[j] + GetMinHCost (i, j, selectedRows, rows);
+         int hCost = GetMinHCost (i, j, selectedRows, rows);
+         dp[i][j] = v_cost[j] + hCost;
       }
    }
 
@@ -101,7 +103,7 @@ int GetMinHCost (int ith, int col, int* selectedRows, int rows)
 {
    int min = INT_MAX;
    for (int j = ith - 2; j < col; j++) {
-      int h = dp[ith - 1][j];
+      int h = dp[ith - 1][j];      
       for (int i = 0; i < rows; i++) {
          int row = selectedRows[i];
          h += ABS (matrix[row][j] - matrix[row][col]);
