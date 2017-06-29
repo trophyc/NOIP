@@ -34,7 +34,7 @@ int main ()
          oddPos[color].push_back(i);
       }
    }
-printf ("------\n");
+
    int sum = 0;
    for (int i = 0; i < colors; i++) {
       sum += GetSum (evenPos[i]) + GetSum (oddPos[i]);
