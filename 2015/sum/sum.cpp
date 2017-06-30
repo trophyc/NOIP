@@ -16,6 +16,7 @@ IntVec evenPos[MAX_COLORS];
 #define MOD 10007
 
 int GetSum (IntVec v);
+int GetSum_fast (IntVec v);
 
 int main ()
 {
@@ -37,7 +38,7 @@ int main ()
 
    int sum = 0;
    for (int i = 0; i < colors; i++) {
-      sum += GetSum (evenPos[i]) + GetSum (oddPos[i]);
+      sum += GetSum_fast (evenPos[i]) + GetSum_fast (oddPos[i]);
       sum %= MOD;
    }
    printf ("%d\n", sum);
@@ -54,6 +55,24 @@ int GetSum (IntVec v)
          sum += (v[i] + v[j] + 2) % MOD * ((number[v[i]] + number[v[j]]) % MOD);
          sum %= MOD;
       }
+   }
+   return sum;
+}
+
+int GetSum_fast (IntVec v)
+{
+   int sum = 0;
+   int n = v.size();
+
+   int a = 0;
+   for (int i = 0; i < n; i++) {
+      a += number[v[i]];
+      a %= MOD;
+   }
+
+   for (int i = 0 ; i < n; i++) {
+      sum +=  (a + (n-2) * number[v[i]]) % MOD * (v[i] + 1);
+      sum %= MOD;
    }
    return sum;
 }
