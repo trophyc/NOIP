@@ -18,6 +18,7 @@ int main ()
    scanf ("%d", &brokenNbr);
    for (int i = 0; i < brokenNbr; i++) {
       scanf ("%d", &broken[i]);
+      broken[i]--;
    }
 
    if (brokenNbr == 0) {
@@ -26,16 +27,16 @@ int main ()
    }
 
    memset (cost, 0, sizeof (cost));
-   cost[broken[0]] = 1;
+   cost[0] = 1;
 
    for (int i = 1; i < brokenNbr; i++) {
       int cur = broken[i];
-      float minimum = sqrt (cur +1);
+      float minimum = sqrt (cur - broken[0] + 1);
       for (int j = 1; j <= i; j++) {
-         int prev1 = broken[j-1];
          int prev = broken[j];
-         float tmp = cost[prev1] + sqrt (cur - prev + 1);
+         float tmp = cost[j-1] + sqrt (cur - prev + 1);
          minimum = min (minimum, tmp);
+printf ("i, j = %d, %d\t tmp = %f, min = %f\n", i, j, tmp, minimum);         
       }
       cost[i] = minimum;
    }
