@@ -17,10 +17,9 @@ typedef vector<Plot> PlotVector;
 void Readin (int& target, PlotVector& v, int& dec);
 void EnlargeVector (PlotVector& v, int i);
 void PrintInfo (int target, PlotVector& v, int dec);
-void AddAllPrices (PlotVector v);
 int GetSalesByPrice (PlotVector v, int dec, int price);
-float CalcLimit (int target_profit, int target_sales, int profit, int sales);
-void PrintSubside (float down, float up);
+double CalcLimit (int target_profit, int target_sales, int profit, int sales);
+void PrintSubside (double down, double up);
 
 int main ()
 {
@@ -34,13 +33,12 @@ int main ()
    int sales = GetSalesByPrice (v, dec, price);
    int target_sales = GetSalesByPrice (v, dec, target);
 
-   float up_limit = 10000;
-   float down_limit = -10000; 
+   double up_limit = 10000;
+   double down_limit = -10000; 
 
    while (sales >= 0 ) {
-//      cout << price << "           " << sales << endl;     
       if (price != target) {
-         float limit; 
+         double limit; 
          if (sales != target_sales) {
             limit = CalcLimit(target - cost, target_sales, price - cost, sales);
          } else if (price < target) {
@@ -52,7 +50,6 @@ int main ()
             exit(0);
          }
 
-//         cout << limit << endl;
          if (price < target && sales != target_sales) {
             up_limit = (up_limit > limit ? limit : up_limit);
          } else {
@@ -63,7 +60,6 @@ int main ()
       sales = GetSalesByPrice (v, dec, price);
    }
 
-//   cout << down_limit << "     " << up_limit << endl;
    PrintSubside (down_limit, up_limit);
    return 0;
 }
@@ -133,12 +129,12 @@ int GetSalesByPrice (PlotVector v, int dec, int price)
    return sales;
 }
 
-float CalcLimit (int profit_target, int target_sales, int profit, int sales)
+double CalcLimit (int profit_target, int target_sales, int profit, int sales)
 {
-   return ((float)profit_target * (float)target_sales - (float)profit * (float)sales) / ((float)sales - (float)target_sales);
+   return ((double)profit_target * (double)target_sales - (double)profit * (double)sales) / ((double)sales - (double)target_sales);
 }
 
-void PrintSubside (float down, float up)
+void PrintSubside (double down, double up)
 {
    if (down > up) {
       cout << "NO SOLUTION" << endl;
