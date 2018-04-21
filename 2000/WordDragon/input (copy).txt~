@@ -1,7 +1,0 @@
-5
-at
-touch
-cheat
-choose
-tact
-a
